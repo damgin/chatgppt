@@ -16,10 +16,9 @@ void* recv_client(void* arg) {
 
         ///// URGENCE ICI BAS
         printf("recv %d\n",client_id);
-        recv(clients_fd[client_id].id, &msg, sizeof(t_infos), 0);perror("recv");
+        recv(clients_fd[client_id].fd, &msg, sizeof(t_infos), 0);perror("recv");
         printf("msg : %s\n",msg.message);
-        broadcast_to_salon(msg.salon,&msg);
-
+        broadcast_to_salon(salons,msg);
         // if(isCommand(msg)){  /// doit renvoyer 1 ou 0
         //     handleCommand(msg);
         // }else{
@@ -27,7 +26,7 @@ void* recv_client(void* arg) {
        
 
     }
-    close(clients_fd[client_id].id);
+    close(clients_fd[client_id].fd);
     return NULL;
 
 }
@@ -59,7 +58,7 @@ void* accept_client(void*arg){
         // Trouver un emplacement libre dans le tableau
         int client_id = -1;
         for (int i = 0; i < MAX_CLIENTS; i++) {
-            if (clients_fd[i].id == 0) { // 0 signifi emplacement libre
+            if (clients_fd[i].fd == 0) { // 0 signifi emplacement libre
                 client_id = i;
                 break;
             }
@@ -70,7 +69,7 @@ void* accept_client(void*arg){
             continue;
         }
         // Initialiser le client
-        clients_fd[client_id].id = new_fd;
+        clients_fd[client_id].fd = new_fd;
         clients_fd[client_id].salon = 0; // Par défaut, salon public
         clients_fd[client_id].destinataire = 0;
         salons[0].client_count++;
@@ -84,7 +83,7 @@ void* accept_client(void*arg){
         if (!new_client_id) {
             perror("malloc");
             close(new_fd);
-            clients_fd[client_id].id = 0;
+            clients_fd[client_id].fd = 0;
             continue;
         }
 
@@ -94,7 +93,7 @@ void* accept_client(void*arg){
         if (pthread_create(&thread_client, NULL, recv_client, new_client_id) != 0) {
             perror("pthread_create");
             close(new_fd);
-            clients_fd[client_id].id = 0;
+            clients_fd[client_id].fd = 0;
         
             continue;
         }

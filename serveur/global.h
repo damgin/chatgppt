@@ -1,7 +1,7 @@
 #pragma once
 
 #define SERVER_PORT 7744
-#define MAX_CLIENTS 1000
+#define MAX_CLIENTS 5
 #define MAX_SALONS 100
 
 #include <dirent.h> // Pour lister les fichiers
@@ -17,7 +17,7 @@
 
 
 typedef struct infos_client {
-    int id;                 // Identifiant unique du client
+    int fd;                 // Identifiant unique du client
     int destinataire;       // Pour un salon privé (0 = public)
     char name[255];         // Nom de l'utilisateur
     char message[255];      // Message envoyé
@@ -30,7 +30,7 @@ t_infos clients_fd[MAX_CLIENTS];
 typedef struct salon {
     int id;               
     char name[255];       
-    int clients[MAX_CLIENTS]; 
+   ///// int clients[MAX_CLIENTS]; 
     int client_count;
 } t_salon;
 

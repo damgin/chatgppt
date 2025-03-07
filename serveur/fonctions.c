@@ -102,25 +102,24 @@ int initSocket(int port) {
 //     ///fermer le mutex ici !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // }
 
-void broadcast_to_salon(int salon_id, t_infos* user) {
-    printf("broadcast_to_salon\n");
-    for (int i = 0; i < salon_count; i++) {
-        printf("recherche du salon :)\n");
-        if (salons[i].id == salon_id) {
-            printf("recherche des clients presents\n");
-            printf("user id : %d\n",user->id);
-            for (int j = 0; j < salons[i].client_count; j++) {
-                int dest_id = salons[i].clients[j];
-                printf("envoi du message au client(%d)\n",dest_id);
-                if (dest_id != user->id) {
-                    send(clients_fd[i].id, user, sizeof(t_infos), 0);perror("send");
-                }
-            }
+void broadcast_to_salon(t_salon* salons,t_infos msg) {
 
-            break;  //breack prémature si on a envoyer tout les messages
+    int salon_id = msg.salon;
+
+    // je parcourt les user du salon i
+    // POur chaque client contenu dans le salon : salon_id
+
+        // Si le client possède le meme id 
+        for( int i = 0; i < MAX_CLIENTS; i++ ){
+
+            if(clients_fd[i].salon == msg.salon){
+                printf("envoie du message '%s' au client:%s\n",msg.message,msg.name);
+                send(clients_fd[i].fd,&msg,sizeof(t_infos),0);
+                continue;
+            }
         }
-    }
-    ///fermer le mutex ici !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+        ///fermer le mutex ici !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 }
 
 // void handle_command(char* command, int client_id) {
