@@ -16,13 +16,11 @@
 
 
 
-typedef struct infos_client{
-    int id;
-    int destinataire;
-    char name[255];
-    char message[255];
-    int salon;
-    
+typedef struct infos_client {
+    int fd;                 // Identifiant unique du client
+    char name[255];         // Nom de l'utilisateur
+    char message[255];      // Message envoyé
+    int salon;              // ID du salon où se trouve le client
 } t_infos;
 
 /// anciennement tab_client

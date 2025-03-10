@@ -18,13 +18,16 @@
 
 typedef struct infos_client {
     int fd;                 // Identifiant unique du client
-    int destinataire;       // Pour un salon privé (0 = public)
     char name[255];         // Nom de l'utilisateur
     char message[255];      // Message envoyé
     int salon;              // ID du salon où se trouve le client
 } t_infos;
 // Tableau des clients connectés
+
 t_infos clients_fd[MAX_CLIENTS];
+
+
+int compteur_client = 0;
 
 // Structure pour un salon de discussion
 typedef struct salon {

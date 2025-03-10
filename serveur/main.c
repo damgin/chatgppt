@@ -15,14 +15,16 @@ void* recv_client(void* arg) {
     while (1){
 
         ///// URGENCE ICI BAS
-        printf("recv %d\n",client_id);
+        printf("recv du client : %d\n",client_id);
         recv(clients_fd[client_id].fd, &msg, sizeof(t_infos), 0);perror("recv");
-        printf("msg : %s\n",msg.message);
-        broadcast_to_salon(salons,msg);
-        // if(isCommand(msg)){  /// doit renvoyer 1 ou 0
-        //     handleCommand(msg);
+        printf("message de %s: %s\n",msg.name,msg.message);
+        // if (strcmp(msg.message, "create salon") == 0) { 
+        //     create_salon(clients_fd[client_id].fd, msg.message + 12);
+        
         // }else{
-        //
+        //     printf("client : %s dans le salon : %s.\n",msg.name, msg.salon);
+        broadcast_to_salon(salons,msg);
+        // }
        
 
     }
@@ -33,11 +35,9 @@ void* recv_client(void* arg) {
 
 void* accept_client(void*arg){
 
-    int client_count = 0;
-
     while (1) {
 
-        if (client_count >= MAX_CLIENTS) {
+        if (compteur_client >= MAX_CLIENTS) {
             printf("Nombre maximum de clients atteint.\n");
             sleep(1); // Évite une boucle infinie trop rapide
             continue;
@@ -71,26 +71,15 @@ void* accept_client(void*arg){
         // Initialiser le client
         clients_fd[client_id].fd = new_fd;
         clients_fd[client_id].salon = 0; // Par défaut, salon public
-        clients_fd[client_id].destinataire = 0;
+        
         salons[0].client_count++;
         printf("salon '%s : %d utilisateurs\n",salons[0].name,salons[0].client_count);
         strcpy(clients_fd[client_id].name, "Inconnu");
         printf("Client[%d] accepté, fd = %d\n", client_id, new_fd);
         
 
-        // Créer un nouvel ID dynamique pour éviter les problèmes de concurrence
-        int* new_client_id = malloc(sizeof(int));
-        if (!new_client_id) {
-            perror("malloc");
-            close(new_fd);
-            clients_fd[client_id].fd = 0;
-            continue;
-        }
-
-        *new_client_id = client_id;
-
         pthread_t thread_client;
-        if (pthread_create(&thread_client, NULL, recv_client, new_client_id) != 0) {
+        if (pthread_create(&thread_client, NULL, recv_client, &client_id) != 0) {
             perror("pthread_create");
             close(new_fd);
             clients_fd[client_id].fd = 0;
@@ -98,7 +87,7 @@ void* accept_client(void*arg){
             continue;
         }
         
-        client_count++;
+        compteur_client++;
     }
 
 }

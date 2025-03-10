@@ -37,6 +37,7 @@ int main(int argc, char** argv){
     printf("bienvenue '%s'\n",user_infos.name);
  
     printf("connection au salon\n");
+    user_infos.salon = 0;
     pthread_t my_thread;
     pthread_create(&my_thread,NULL,recv_client,&client_fd);
 
@@ -44,7 +45,7 @@ int main(int argc, char** argv){
                                                                                                                                                                                                                                          
         fgets(user_infos.message,sizeof(user_infos.message),stdin);
         send(client_fd,&user_infos, sizeof(user_infos),0);perror("send");
-        printf("msg : %s\n",user_infos.message);
+        //printf("msg : %s\n",user_infos.message);
         
     }
 
